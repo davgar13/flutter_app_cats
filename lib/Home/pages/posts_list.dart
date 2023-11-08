@@ -19,7 +19,7 @@ class PostsList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No hay datos disponibles'));
+          return const Center(child: Text('No hay gatos disponibles'));
         }
 
         var posts = snapshot.data!.docs;

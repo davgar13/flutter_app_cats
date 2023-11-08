@@ -34,20 +34,20 @@ class HomeScreen extends StatelessWidget {
           shadowColor: Theme.of(context).shadowColor,
           bottom: TabBar(
             tabs: <Widget>[
-              Tab(
-                icon: const Image(image: AssetImage('asset/images/cat.png'),
-                 width: 28, 
-                 height: 28,
-                 ),
-                text: titles[0],
-              ),
-              Tab(
-                icon: const Image(image: AssetImage('asset/images/paws.png'),
-                 width: 35, 
-                 height: 35,
-                 ),
-                text: titles[1],
-              ),
+                Tab(
+                  icon: const Image(image: AssetImage('asset/images/cat.png'),
+                  width: 28, 
+                  height: 28,
+                  ),
+                  text: titles[0],
+                ),
+                Tab(
+                  icon: const Image(image: AssetImage('asset/images/paws.png'),
+                  width: 35, 
+                  height: 35,
+                  ),
+                  text: titles[1],
+                ),
               Tab(
                 icon: const Image(
                   image: AssetImage('asset/images/hair.png'),

@@ -93,7 +93,9 @@ class _DataEntryFormState extends State<DataEntryForm> {
 
     try {
       final imageUrl = await _uploadImageAndGetDownloadUrl(_image!);
-      await FirebaseFirestore.instance.collection('gatos').add({
+      // Crear un nuevo documento en Firestore y obtener el ID del documento
+      DocumentReference docRef =
+          await FirebaseFirestore.instance.collection('gatos').add({
         'nombre': _nameController.text,
         'raza': _breedController.text,
         'edad': _ageController.text,
@@ -103,7 +105,12 @@ class _DataEntryFormState extends State<DataEntryForm> {
         'descripcion': _descriptionController.text,
         'owner_id': ownerId,
         'image_url': imageUrl,
+        // No es necesario agregar el 'id' aquí ya que se genera automáticamente
       });
+
+      // Opcionalmente, actualiza el documento con el ID si es necesario
+      await docRef.update({'id': docRef.id});
+
       _clearForm();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
