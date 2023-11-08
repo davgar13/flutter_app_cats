@@ -19,7 +19,7 @@ class PostsList extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No hay datos disponibles'));
+          return const Center(child: Text('No hay gatos disponibles'));
         }
 
         var posts = snapshot.data!.docs;
@@ -48,14 +48,14 @@ class PostsList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
-                      title: Text('Dueño: ${post['nombre_dueño']}'),
+                      title: Text('Dueño: ${post ['nombre_dueño']}'),
                     ),
                     if (post['image_url'] != null &&
                         post['image_url'].isNotEmpty)
                       ClipRRect(
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(10.0)),
-                        child: Image.network(
+                        child: Image. network(
                           post['image_url'],
                           width: double.infinity,
                           height: 200.0,
