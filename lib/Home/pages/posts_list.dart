@@ -41,7 +41,7 @@ class PostsList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
-                      title: Text('Dueño: ${post['nombre_dueño']}'),
+                      title: Text('Dueño: ${post ['nombre_dueño']}'),
                     ),
                     if (post['image_url'] != null &&
                         post['image_url'].isNotEmpty)
@@ -49,7 +49,7 @@ class PostsList extends StatelessWidget {
                         // Clip the image with rounded corners
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(10.0)),
-                        child: Image.network(
+                        child: Image. network(
                           post['image_url'],
                           width: double.infinity,
                           height: 200.0,
