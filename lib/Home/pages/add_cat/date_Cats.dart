@@ -52,7 +52,7 @@ class _DataEntryFormState extends State<DataEntryForm> {
   Future<void> _submitForm() async {
 
     final currentUser = FirebaseAuth.instance.currentUser;
-    final ownerId = currentUser!.uid;
+    final ownerEmail = currentUser!.email;
     try {
         //final imageURL = await storageRef.child('gatos/${_image!.path}').getDownloadURL();
         
@@ -64,7 +64,7 @@ class _DataEntryFormState extends State<DataEntryForm> {
           'telefono': _phoneController.text,
           'nombre_dueño': _ownerNameController.text,
           'descripcion': _descriptionController.text,
-          'owner_id': ownerId,
+          'owner_Email': ownerEmail,
           'image_url': _image!.path,
         });
 
@@ -105,10 +105,12 @@ class _DataEntryFormState extends State<DataEntryForm> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Nombre del gato (opcional)'),
             ),
+
             TextFormField(
               controller: _breedController,
               decoration: const InputDecoration(labelText: 'Raza'),
@@ -119,22 +121,27 @@ class _DataEntryFormState extends State<DataEntryForm> {
                 return null;
               },
             ),
+
             TextFormField(
               controller: _ageController,
               decoration: const InputDecoration(labelText: 'Edad'),
             ),
+
             TextFormField(
               controller: _sexController,
               decoration: const InputDecoration(labelText: 'Sexo'),
             ),
+
             TextFormField(
               controller: _phoneController,
               decoration: const InputDecoration(labelText: 'Número de Teléfono'),
             ),
+
             TextFormField(
               controller: _ownerNameController,
               decoration: const InputDecoration(labelText: 'Nombre del Dueño'),
             ),
+            
             TextFormField(
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: 'Descripción'),
@@ -152,6 +159,8 @@ class _DataEntryFormState extends State<DataEntryForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _submitForm();
+                  
+
                 }
               },
               child: const Text('Guardar Datos'),
@@ -161,4 +170,5 @@ class _DataEntryFormState extends State<DataEntryForm> {
       ),
     );
   }
+  
 }

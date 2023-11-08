@@ -69,7 +69,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 child: Image.asset('asset/images/MyCat.png'),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(80, 155, 20, 50),
+                padding: const EdgeInsets.fromLTRB(70, 155, 0, 50),
                 child: Container(
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -80,7 +80,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                  width: 200,
+                  width: 220,
                   height: 270,
                   child: Container(
                     color: Colors.white,

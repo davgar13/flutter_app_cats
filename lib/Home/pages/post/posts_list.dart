@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app_cats/Home/pages/Adopform/adop_form.dart';
 
 
 class PostsList extends StatelessWidget {
@@ -48,6 +49,14 @@ class PostsList extends StatelessWidget {
                         Text('Sexo: ${post['sexo']}'),
                         Text('Edad: ${post['edad']}'),
                         Text('Teléfono del Dueño: ${post['telefono']}'),
+                        ElevatedButton(
+                          onPressed: (){ 
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(builder: (context) => AdoptionFormScreen(ownerEmail: post['owner_Email'])),
+                            );
+                          }, child: const Text('Adoptar'),
+                        )
                       ],
                     ),
                   ),

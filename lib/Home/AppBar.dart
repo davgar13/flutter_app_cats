@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_cats/Home/pages/Cat_Screen.dart';
-import 'package:flutter_app_cats/Home/pages/date_Cats.dart';
-import 'package:flutter_app_cats/Home/pages/post_screen.dart';
+import 'package:flutter_app_cats/Home/pages/api/Cat_Screen.dart';
+import 'package:flutter_app_cats/Home/pages/add_cat/date_Cats.dart';
+import 'package:flutter_app_cats/Home/pages/post/post_screen.dart';
 
 
 List<String> titles = <String>[

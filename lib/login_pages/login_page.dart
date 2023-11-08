@@ -60,7 +60,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
 
             Padding(
-            padding: const EdgeInsets.fromLTRB(80, 155, 20, 50),
+            padding: const EdgeInsets.fromLTRB(70, 155, 0, 50),
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -71,7 +71,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
-              width: 200,
+              width: 220,
               height: 270,
               child: Container(
                 decoration: const BoxDecoration(
