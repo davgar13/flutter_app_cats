@@ -71,8 +71,8 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 color: Color.fromARGB(255, 255, 255, 255),
               ),
-              width: 200,
-              height: 270,
+              width: 220,
+              height: 275,
               child: Container(
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(

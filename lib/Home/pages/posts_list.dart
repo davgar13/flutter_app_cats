@@ -9,17 +9,25 @@ class PostsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('gatos').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         }
 
-        var posts = snapshot.data?.docs;
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error al cargar los datos'));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text('No hay datos disponibles'));
+        }
+
+        var posts = snapshot.data!.docs;
 
         return ListView.builder(
-          itemCount: posts?.length ?? 0,
+          itemCount: posts.length,
           itemBuilder: (context, index) {
-            var post = posts![index].data() as Map<String, dynamic>;
+            var post = posts[index].data() as Map<String, dynamic>;
 
             return GestureDetector(
               onTap: () {
@@ -33,10 +41,9 @@ class PostsList extends StatelessWidget {
               child: Card(
                 margin: const EdgeInsets.all(16.0),
                 shape: RoundedRectangleBorder(
-                  // Bordes redondeados
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                elevation: 10, // Sombra en la parte inferior del Card
+                elevation: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -46,7 +53,6 @@ class PostsList extends StatelessWidget {
                     if (post['image_url'] != null &&
                         post['image_url'].isNotEmpty)
                       ClipRRect(
-                        // Clip the image with rounded corners
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(10.0)),
                         child: Image.network(
@@ -54,6 +60,24 @@ class PostsList extends StatelessWidget {
                           width: double.infinity,
                           height: 200.0,
                           fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return const Icon(
+                                Icons.error); // Or any placeholder you'd like
+                          },
                         ),
                       ),
                     Padding(
