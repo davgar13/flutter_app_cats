@@ -90,6 +90,7 @@ class PostsList extends StatelessWidget {
                           Text('Sexo: ${post['sexo']}'),
                           Text('Edad: ${post['edad']}'),
                           Text('Teléfono del Dueño: ${post['telefono']}'),
+                          
                         ],
                       ),
                     ),
