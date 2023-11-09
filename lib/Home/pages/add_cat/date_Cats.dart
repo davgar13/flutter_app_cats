@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app_cats/bloc/form_bloc.dart';
+import 'package:flutter_app_cats/bloc/form_events.dart';
+import 'package:flutter_app_cats/bloc/form_states.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as p;
@@ -11,20 +15,54 @@ class DataEntryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: const [
-          SizedBox(height: 20),
-          Center(
-            child: Text(
-              'Añadir Gato',
-              style: TextStyle(fontSize: 24),
-            ),
+    return BlocBuilder<FormBloc, FormStates>(
+      builder: (context, state) {
+        //BlocProvider.of<FormBloc>(context).add(PendingEvent());
+        if (state is UpdateState) {
+          if (state.succes == "n") {
+            return listView(context);
+          } else if (state.succes == "y") {
+            return success(context);
+          }
+        }
+        return listView(context);
+      },
+    );
+  }
+
+  Widget success(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Guardado correctamente',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20),
-          DataEntryForm(),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              BlocProvider.of<FormBloc>(context).add(PendingEvent());
+            },
+            child: const Text('Añadir nuevo gato'),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget listView(BuildContext context) {
+    return ListView(
+      children: const [
+        SizedBox(height: 20),
+        Text(
+          'Añadir Gato',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 24),
+        ),
+        SizedBox(height: 20),
+        DataEntryForm(),
+      ],
     );
   }
 }
@@ -113,6 +151,7 @@ class _DataEntryFormState extends State<DataEntryForm> {
 
       _clearForm();
       if (mounted) {
+        BlocProvider.of<FormBloc>(context).add(SuccessEvent());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Datos guardados correctamente')),
         );

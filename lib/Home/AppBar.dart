@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_cats/Home/pages/Cat_Screen.dart';
-import 'package:flutter_app_cats/Home/pages/date_Cats.dart';
-import 'package:flutter_app_cats/Home/pages/post_screen.dart';
-
+import 'package:flutter_app_cats/Home/pages/api/Cat_Screen.dart';
+import 'package:flutter_app_cats/Home/pages/add_cat/date_Cats.dart';
+import 'package:flutter_app_cats/Home/pages/post/post_screen.dart';
+import 'package:flutter_app_cats/Home/pages/user/profile_screen.dart';
 
 List<String> titles = <String>[
   'Cats',
@@ -14,6 +14,7 @@ List<String> titles = <String>[
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
@@ -25,29 +26,39 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Adopt a Cat'),
-          
+          actions: [
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
           notificationPredicate: (ScrollNotification notification) {
             return notification.depth == 1;
           },
-    
           scrolledUnderElevation: 4.0,
           shadowColor: Theme.of(context).shadowColor,
           bottom: TabBar(
             tabs: <Widget>[
-                Tab(
-                  icon: const Image(image: AssetImage('asset/images/cat.png'),
-                  width: 28, 
+              Tab(
+                icon: const Image(image: AssetImage('asset/images/cat.png'),
+                  width: 28,
                   height: 28,
-                  ),
-                  text: titles[0],
                 ),
-                Tab(
-                  icon: const Image(image: AssetImage('asset/images/paws.png'),
-                  width: 35, 
+                text: titles[0],
+              ),
+              Tab(
+                icon: const Image(image: AssetImage('asset/images/paws.png'),
+                  width: 35,
                   height: 35,
-                  ),
-                  text: titles[1],
                 ),
+                text: titles[1],
+              ),
               Tab(
                 icon: const Image(
                   image: AssetImage('asset/images/hair.png'),
@@ -61,13 +72,9 @@ class HomeScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: <Widget>[
-
             ListadoGatos(),
-              
             PostsScreen(),
-
             DataEntryScreen(),
-              
           ],
         ),
       ),
