@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_app_cats/Home/AppBar.dart';
 import 'package:flutter_app_cats/bloc/form_bloc.dart';
 import 'package:flutter_app_cats/firebase_options.dart';
 import 'package:flutter_app_cats/login_pages/login_page.dart';

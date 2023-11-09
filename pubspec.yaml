@@ -23,7 +23,7 @@ dependencies:
   http: ^1.1.0
   image_picker: ^1.0.4
   mailer: ^6.0.1
-  flutter_bloc: 8.1.3
+  flutter_bloc: ^8.1.3
 
 dev_dependencies:
   flutter_test:
