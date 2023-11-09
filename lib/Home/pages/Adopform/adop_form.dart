@@ -1,7 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_cats/firebase/send_mail.dart';
+import 'package:flutter_app_cats/service/service_email.dart';
 
 
 class AdoptionFormScreen extends StatefulWidget {
@@ -10,6 +10,7 @@ class AdoptionFormScreen extends StatefulWidget {
 
   @override
   _AdoptionFormScreenState createState() => _AdoptionFormScreenState();
+  
 }
 
 class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
@@ -44,10 +45,9 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   
   Future<void> _submitForm() async {
     try {
-      await FirebaseFirestore.instance.collection(' ').add({
+      Map<String, dynamic> datos = {
         'Dueño_Email': widget.ownerEmail,
-
-        'datos_personales': { 
+        'datos_personales': {
           'nombre': _nameController.text,
           'apellido': _lastNameController.text,
           'dni': _dniController.text,
@@ -75,7 +75,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         'experiencia': _experienceController.text,
         'mensaje': _messageController.text,
         'createdAt': Timestamp.now(),
-      });
+      };
+
+      await FirebaseFirestore.instance.collection('solicitudes').add(datos);
+
+      enviarEmail(datos);
 
       _nameController.clear();
       _lastNameController.clear();
@@ -199,14 +203,53 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                     },
                   ),
                  
-                  DropdownButton(
-                    value: colors.keys.first, 
-                    items: colors.entries.map((e) {
-                      return DropdownMenuItem(value: e.key, child: Text(e.value));
-                    }).toList(),
-                    onChanged: (value) {
-                      // Enviar el dato seleccionado al controlador
-                      _extencionController.text = value!;
+                  DropdownButton<String>(
+                    value: 'Seleccione su extención',
+                    items: const <DropdownMenuItem<String>>[
+                      DropdownMenuItem<String>(
+                        value: 'Seleccione su extención',
+                        child: Text('Seleccione su extención'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Santa Cruz',
+                        child: Text('Santa Cruz'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'La Paz',
+                        child: Text('La Paz'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Cochabamba',
+                        child: Text('Cochabamba'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Oruro',
+                        child: Text('Oruro'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Potosí',
+                        child: Text('Potosí'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Tarija',
+                        child: Text('Tarija'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Chuquisaca',
+                        child: Text('Chuquisaca'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Beni',
+                        child: Text('Beni'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Pando',
+                        child: Text('Pando'),
+                      ),
+                    ],
+                    onChanged: (String? value) {
+                      _extencionController.text = value ?? '';
+                      // Enviar el dato a la base de datos Firebase
                     },
                   ),
 
@@ -586,7 +629,6 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _submitForm();
-                  sendEmail(widget.ownerEmail!, 'Los datos han sido guardados.');
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Solicitud enviada con éxito')),

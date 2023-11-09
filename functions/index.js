@@ -1,19 +1,19 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {initializeApp} = require("firebase-admin/app");
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+initializeApp();
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+exports.onItemCreation = onDocumentCreated("solicitudes/{solicitudesId}",
+    async (snapshot) => {
+      const itemDataSnap = await snapshot.ref.get();
+      const $ownerEmail = itemDataSnap.data().Dueño_Email;
+      const applicantEmail = itemDataSnap.data().email;
+      const Email = await new Email(applicantEmail)
+          .setSubject("Nueva solicitud de Adopcion")
+          .setBody("Nueva solicitud de adopcion para tu gato"+snapshot.id)
+          .sendTo($ownerEmail);
+      console.log("Email sent successfully");
+    },
+);
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+
