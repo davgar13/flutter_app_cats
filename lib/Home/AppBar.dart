@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app_cats/Home/pages/api/Cat_Screen.dart';
 import 'package:flutter_app_cats/Home/pages/add_cat/date_Cats.dart';
@@ -11,10 +10,8 @@ List<String> titles = <String>[
   'Give Cat',
 ];
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +43,16 @@ class HomeScreen extends StatelessWidget {
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
-                icon: const Image(image: AssetImage('asset/images/cat.png'),
+                icon: const Image(
+                  image: AssetImage('asset/images/cat.png'),
                   width: 28,
                   height: 28,
                 ),
                 text: titles[0],
               ),
               Tab(
-                icon: const Image(image: AssetImage('asset/images/paws.png'),
+                icon: const Image(
+                  image: AssetImage('asset/images/paws.png'),
                   width: 35,
                   height: 35,
                 ),
