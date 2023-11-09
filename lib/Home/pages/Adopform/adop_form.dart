@@ -209,8 +209,6 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                       _extencionController.text = value!;
                     },
                   ),
-                
-                  
 
                   TextFormField(
                     controller: _ageController,
