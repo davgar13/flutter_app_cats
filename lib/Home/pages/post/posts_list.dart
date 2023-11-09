@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_app_cats/Home/pages/cat_detail_screen.dart';
+import 'package:flutter_app_cats/Home/pages/post/cat_detail_screen.dart';
 
 class PostsList extends StatelessWidget {
   const PostsList({super.key});

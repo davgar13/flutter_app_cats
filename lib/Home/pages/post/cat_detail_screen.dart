@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app_cats/Home/pages/AdopForm/adop_form.dart';
 
 class CatDetailScreen extends StatefulWidget {
   final Map<String, dynamic> catData;
-
   const CatDetailScreen({Key? key, required this.catData}) : super(key: key);
+
 
   @override
   _CatDetailScreenState createState() => _CatDetailScreenState();
@@ -54,11 +55,6 @@ class _CatDetailScreenState extends State<CatDetailScreen> {
     }
   }
 
-  void adoptCat() {
-    // Implement the logic to adopt the cat
-    print('Adoptar gato');
-    // For example, update the status to 'Adoptado' and assign the new owner
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +110,11 @@ class _CatDetailScreenState extends State<CatDetailScreen> {
                       BorderRadius.vertical(top: Radius.circular(25.0)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 0,
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
+                      color: catData['estado'] == 'Adoptado'
+                            ? Colors.green
+                            : Colors.red,
+                      spreadRadius: 0.0,
+                      blurRadius: 3.0,
                     ),
                   ],
                 ),
@@ -191,13 +188,13 @@ class _CatDetailScreenState extends State<CatDetailScreen> {
                       )
                     else
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
-                          onPrimary: Colors.white,
-                        ),
-                        child: Text('Adoptar'),
-                        onPressed: adoptCat,
-                      ),
+                          onPressed: (){ 
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(builder: (context) => AdoptionFormScreen(ownerEmail: catData['owner_Email'])),
+                            );
+                          }, child: const Text('Adoptar'),
+                        )
                   ],
                 ),
               ),

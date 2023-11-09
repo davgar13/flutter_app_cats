@@ -13,4 +13,5 @@ class FormBloc extends Bloc<FormEvents, FormStates> {
   void onSuccessEvent(SuccessEvent event, Emitter<FormStates> emit) {
     emit(UpdateState("y"));
   }
+
 }

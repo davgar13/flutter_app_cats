@@ -33,27 +33,54 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
 
   Future<void> _register() async {
-  try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+    try {
+      // Registra el nuevo usuario
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
-    await FirebaseFirestore.instance.collection('users').add({
-      'username': _usernameController.text,
-      'email': _emailController.text,
-    });
+      // Asegúrate de obtener el usuario recién registrado
+      User? newUser = userCredential.user;
+
+      // Actualiza el displayName del usuario recién registrado con el nombre de usuario proporcionado
+      if (newUser != null) {
+        await newUser.updateDisplayName(_usernameController.text);
+
+        // Puede que necesites recargar el usuario para obtener la información actualizada
+        await newUser.reload();
+        newUser = FirebaseAuth.instance.currentUser;
+
+        // Guarda los datos del usuario en la colección 'profile' de Firestore
+        await FirebaseFirestore.instance
+            .collection('profile')
+            .doc(newUser!.email)
+            .set({
+          'username': _usernameController.text,
+          'email': newUser.email,
+          'ciudad': "",
+          'image_url': "",
+          'owner_Email': newUser.email, // Este es el correo del nuevo usuario
+          'pais': "",
+          'telefono': "",
+        });
 
 
-    // Registro exitoso, navega a la pantalla de inicio (HomeScreen) aquí
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  } catch (e) {
-    print(e.toString());
-    // Handle error de registro
+    
+
+
+     // Navega a la pantalla de inicio (HomeScreen) aquí
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        print('Error: No se pudo obtener el nuevo usuario.');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
-}
 
 
   @override
@@ -80,8 +107,8 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                  width: 200,
-                  height: 270,
+                  width: 250,
+                  height: 290,
                   child: Container(
                     color: Colors.white,
                     margin: const EdgeInsets.all(15),
@@ -141,7 +168,9 @@ class _RegisterFormState extends State<RegisterForm> {
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: _register, // Llama a la función de registro
+                          onPressed: (){
+                            _register();
+                          }, // Llama a la función de registro
                           child: const Text('Registrar'),
                         ),
                       ],
@@ -156,7 +185,6 @@ class _RegisterFormState extends State<RegisterForm> {
                 height: 150,
               ),
             )
-
             ],
           )
         ],
