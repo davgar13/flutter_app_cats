@@ -30,24 +30,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> getUserProfileData() async {
-    final DocumentSnapshot profileSnapshot =
-        await _firestore.collection('profile').doc(_currentUser!.email).get();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final DocumentSnapshot profileSnapshot = await FirebaseFirestore.instance
+          .collection('profile')
+          .doc(currentUser.email)
+          .get();
 
-    if (profileSnapshot.exists && profileSnapshot.data() != null) {
-      setState(() {
-        _profileData = profileSnapshot.data()! as Map<String, dynamic>;
-      });
-    } else {
-      // Maneja el caso en que no existen datos del perfil, por ejemplo:
-      setState(() {
-        _profileData = {
-          'username': 'No especificado',
-          'email': _currentUser!.email,
-          // Inicializa los otros campos que esperas encontrar en tu perfil.
-        };
-      });
+      if (profileSnapshot.exists) {
+        setState(() {
+          _profileData = profileSnapshot.data()! as Map<String, dynamic>;
+        });
+      } else {
+        // Si el snapshot no existe, puedes usar el displayName de FirebaseAuth
+        setState(() {
+          _profileData = {
+            'username': currentUser.displayName ?? 'Nombre no establecido',
+            'email': currentUser.email ?? 'Email no establecido',
+            // Añade otros campos con valores predeterminados si es necesario
+          };
+        });
+      }
     }
   }
+
 
 
   @override

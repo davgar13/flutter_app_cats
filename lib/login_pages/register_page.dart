@@ -33,48 +33,52 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
 
   Future<void> _register() async {
-  try {
-    // Registra el nuevo usuario
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+    try {
+      // Registra el nuevo usuario
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
-    // Asegúrate de obtener el usuario recién registrado
-    User? newUser = userCredential.user;
-    String? ownerEmail = newUser?.email; // Aquí obtienes el email del nuevo usuario
+      // Asegúrate de obtener el usuario recién registrado
+      User? newUser = userCredential.user;
 
-    // Ahora usa ese email para las operaciones de Firestore
-    if (ownerEmail != null) {
-      await FirebaseFirestore.instance.collection('users').add({
-        'username': _usernameController.text,
-        'email': ownerEmail,
-      });
+      // Actualiza el displayName del usuario recién registrado con el nombre de usuario proporcionado
+      if (newUser != null) {
+        await newUser.updateDisplayName(_usernameController.text);
 
-      await FirebaseFirestore.instance.collection('profile').add({  
-        'ciudad': "",
-        'email': ownerEmail,
-        'image_url': "",
-        'owner_Email': ownerEmail, // Aquí ya deberías tener el correo del nuevo usuario
-        'pais': "",
-        'telefono': "",
-        'username': _usernameController.text,
-      });
+        // Puede que necesites recargar el usuario para obtener la información actualizada
+        await newUser.reload();
+        newUser = FirebaseAuth.instance.currentUser;
+
+        // Guarda los datos del usuario en la colección 'profile' de Firestore
+        await FirebaseFirestore.instance
+            .collection('profile')
+            .doc(newUser!.email)
+            .set({
+          'username': _usernameController.text,
+          'email': newUser.email,
+          'ciudad': "",
+          'image_url': "",
+          'owner_Email': newUser.email, // Este es el correo del nuevo usuario
+          'pais': "",
+          'telefono': "",
+        });
+
 
     
 
 
-    // Registro exitoso, navega a la pantalla de inicio (HomeScreen) aquí
+     // Navega a la pantalla de inicio (HomeScreen) aquí
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       } else {
-        // Maneja el caso en que newUser sea null
         print('Error: No se pudo obtener el nuevo usuario.');
       }
     } catch (e) {
       print(e.toString());
-      // Maneja el error de registro aquí
     }
   }
 
@@ -103,7 +107,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
-                  width: 200,
+                  width: 250,
                   height: 290,
                   child: Container(
                     color: Colors.white,
