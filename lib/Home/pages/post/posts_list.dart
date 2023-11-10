@@ -41,21 +41,31 @@ class PostsList extends StatelessWidget {
               child: Card(
                 margin: const EdgeInsets.all(16.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
                 elevation: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
-                      title: Text('Dueño: ${post ['nombre_dueño']}'),
+                      title: Text(
+                        'Dueño: ${post['nombre_dueño']}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        'Nombre del Gato: ${post['nombre']}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      contentPadding: EdgeInsets.all(16.0),
                     ),
                     if (post['image_url'] != null &&
                         post['image_url'].isNotEmpty)
                       ClipRRect(
                         borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10.0)),
-                        child: Image. network(
+                            BorderRadius.vertical(top: Radius.circular(15.0)),
+                        child: Image.network(
                           post['image_url'],
                           width: double.infinity,
                           height: 200.0,
@@ -76,7 +86,7 @@ class PostsList extends StatelessWidget {
                           errorBuilder: (BuildContext context, Object exception,
                               StackTrace? stackTrace) {
                             return const Icon(
-                                Icons.error); // Or any placeholder you'd like
+                                Icons.error); // Placeholder in case of error
                           },
                         ),
                       ),
@@ -85,12 +95,22 @@ class PostsList extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Nombre del Gato: ${post['nombre']}'),
-                          Text('Descripción: ${post['descripcion']}'),
-                          Text('Sexo: ${post['sexo']}'),
-                          Text('Edad: ${post['edad']}'),
-                          Text('Teléfono del Dueño: ${post['telefono']}'),
-                          
+                          Text(
+                            'Descripción: ${post['descripcion']}',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Sexo: ${post['sexo']}',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Edad: ${post['edad']} años',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Teléfono del Dueño: ${post['telefono']}',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ],
                       ),
                     ),
