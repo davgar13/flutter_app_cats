@@ -53,14 +53,27 @@ class DataEntryScreen extends StatelessWidget {
 
   Widget listView(BuildContext context) {
     return ListView(
-      children: const [
-        SizedBox(height: 20),
-        Text(
-          'Añadir Gato',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24),
+      children: [
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons
+                  .pets, // Puedes cambiar esto por el ícono específico que desees
+              size: 24,
+              color:
+                  Colors.blue, // Puedes cambiar el color según tus preferencias
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Añadir Gato',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24),
+            ),
+          ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         DataEntryForm(),
       ],
     );
@@ -128,6 +141,7 @@ class _DataEntryFormState extends State<DataEntryForm> {
     }
 
     final ownerId = currentUser.uid;
+    final ownerEmail = currentUser.email;
 
     try {
       final imageUrl = await _uploadImageAndGetDownloadUrl(_image!);
@@ -142,6 +156,7 @@ class _DataEntryFormState extends State<DataEntryForm> {
         'nombre_dueño': _ownerNameController.text,
         'descripcion': _descriptionController.text,
         'owner_id': ownerId,
+        'owner_Email': ownerEmail,
         'image_url': imageUrl,
         // No es necesario agregar el 'id' aquí ya que se genera automáticamente
       });
@@ -165,8 +180,6 @@ class _DataEntryFormState extends State<DataEntryForm> {
     }
   }
 
-  
-
   void _clearForm() {
     _nameController.clear();
     _breedController.clear();
@@ -182,99 +195,107 @@ class _DataEntryFormState extends State<DataEntryForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                  labelText: 'Nombre del gato (opcional)'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa un nombre.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _breedController,
-              decoration: const InputDecoration(labelText: 'Raza'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa la raza del gato.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _ageController,
-              decoration: const InputDecoration(labelText: 'Edad'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa la edad del gato.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _sexController,
-              decoration: const InputDecoration(labelText: 'Sexo'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa el sexo del gato.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _phoneController,
-              decoration:
-                  const InputDecoration(labelText: 'Número de Teléfono'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa un número de teléfono.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _ownerNameController,
-              decoration: const InputDecoration(labelText: 'Nombre del Dueño'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa el nombre del dueño.';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Descripción'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa una descripción.';
-                }
-                return null;
-              },
-            ),
-            if (_image != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Image.file(_image!),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(color: Colors.blue, width: 2.0), // Blue border
+      ),
+      elevation: 5,
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                    labelText: 'Nombre del gato (opcional)'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa un nombre.';
+                  }
+                  return null;
+                },
               ),
-            TextButton(
-              onPressed: _pickImage,
-              child: const Text('Seleccionar Imagen'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Guardar Datos'),
-            ),
-          ],
+              TextFormField(
+                controller: _breedController,
+                decoration: const InputDecoration(labelText: 'Raza'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa la raza del gato.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _ageController,
+                decoration: const InputDecoration(labelText: 'Edad'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa la edad del gato.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _sexController,
+                decoration: const InputDecoration(labelText: 'Sexo'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el sexo del gato.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _phoneController,
+                decoration:
+                    const InputDecoration(labelText: 'Número de Teléfono'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa un número de teléfono.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _ownerNameController,
+                decoration:
+                    const InputDecoration(labelText: 'Nombre del Dueño'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el nombre del dueño.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: 'Descripción'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa una descripción.';
+                  }
+                  return null;
+                },
+              ),
+              if (_image != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Image.file(_image!),
+                ),
+              TextButton(
+                onPressed: _pickImage,
+                child: const Text('Seleccionar Imagen'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text('Guardar Datos'),
+              ),
+            ],
+          ),
         ),
       ),
     );

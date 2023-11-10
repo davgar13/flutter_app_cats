@@ -1,8 +1,6 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_cats/firebase/send_mail.dart';
-
+import 'package:flutter_app_cats/service/service_email.dart';
 
 class AdoptionFormScreen extends StatefulWidget {
   final String? ownerEmail;
@@ -13,7 +11,6 @@ class AdoptionFormScreen extends StatefulWidget {
 }
 
 class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
-
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -41,13 +38,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
 
   final _messageController = TextEditingController();
 
-  
   Future<void> _submitForm() async {
     try {
-      await FirebaseFirestore.instance.collection(' ').add({
+      Map<String, dynamic> datos = {
         'Dueño_Email': widget.ownerEmail,
-
-        'datos_personales': { 
+        'datos_personales': {
           'nombre': _nameController.text,
           'apellido': _lastNameController.text,
           'dni': _dniController.text,
@@ -75,7 +70,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         'experiencia': _experienceController.text,
         'mensaje': _messageController.text,
         'createdAt': Timestamp.now(),
-      });
+      };
+
+      await FirebaseFirestore.instance.collection('solicitudes').add(datos);
+
+      enviarEmail(datos);
 
       _nameController.clear();
       _lastNameController.clear();
@@ -120,194 +119,222 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.red,
-                    blurRadius: 3.0,
-                    spreadRadius: 0.0,
-                  )
-                ],
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.red,
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                    )
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255)),
               child: Container(
-                decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
-              margin: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  const ListTile(
-                    title: Row(
-                      children: [
-                        Icon(Icons.person,
-                          color: Colors.red,
-                          size: 25,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                  margin: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ListTile(
+                        title: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: Colors.red,
+                              size: 25,
+                            ),
+                            SizedBox(width: 10),
+                            Text('Datos Personales'),
+                          ],
                         ),
-                        SizedBox(width: 10),
-                        Text('Datos Personales'),
-                      ],
-                    ),
-                    subtitle: Text('Es importante poder identificar al adoptante'),
-                  ),
-                    
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Nombre'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu nombre';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _lastNameController,
-                    decoration: const InputDecoration(labelText: 'Apellidos'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa sus apellidos';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  TextFormField(
-                    controller: _dniController,
-                    decoration: const InputDecoration(labelText: 'DNI'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu DNI';
-                      }
-                      return null;
-                    },
-                  ),
-                
-                  DropdownButton(
-                    value: colors.keys.first, 
-                    items: colors.entries.map((e) {
-                      return DropdownMenuItem(value: e.key, child: Text(e.value));
-                    }).toList(),
-                    onChanged: (value) {
-                      // Enviar el dato seleccionado al controlador
-                      _extencionController.text = value!;
-                    },
-                  ),
-                
-                  
-
-                  TextFormField(
-                    controller: _ageController,
-                    decoration: const InputDecoration(labelText: 'Edad'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu edad';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  TextFormField(
-                    controller: _addressController,
-                    decoration: const InputDecoration(labelText: 'Dirección'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu dirección';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  TextFormField(
-                    controller: _nationalityController,
-                    decoration: const InputDecoration(labelText: 'Nacionalidad'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu nacionalidad';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  TextFormField(
-                    controller: _telephoneController,
-                    decoration: const InputDecoration(labelText: 'Teléfono'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu número de teléfono';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Correo Electrónico'),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Por favor, ingresa tu correo electrónico';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              )
-              ),
+                        subtitle: Text(
+                            'Es importante poder identificar al adoptante'),
+                      ),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(labelText: 'Nombre'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu nombre';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration:
+                            const InputDecoration(labelText: 'Apellidos'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa sus apellidos';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _dniController,
+                        decoration: const InputDecoration(labelText: 'DNI'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu DNI';
+                          }
+                          return null;
+                        },
+                      ),
+                      DropdownButton<String>(
+                        value: 'Seleccione su extención',
+                        items: const <DropdownMenuItem<String>>[
+                          DropdownMenuItem<String>(
+                            value: 'Seleccione su extención',
+                            child: Text('Seleccione su extención'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Santa Cruz',
+                            child: Text('Santa Cruz'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'La Paz',
+                            child: Text('La Paz'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Cochabamba',
+                            child: Text('Cochabamba'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Oruro',
+                            child: Text('Oruro'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Potosí',
+                            child: Text('Potosí'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Tarija',
+                            child: Text('Tarija'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Chuquisaca',
+                            child: Text('Chuquisaca'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Beni',
+                            child: Text('Beni'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Pando',
+                            child: Text('Pando'),
+                          ),
+                        ],
+                        onChanged: (String? value) {
+                          _extencionController.text = value ?? '';
+                          // Enviar el dato a la base de datos Firebase
+                        },
+                      ),
+                      TextFormField(
+                        controller: _ageController,
+                        decoration: const InputDecoration(labelText: 'Edad'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu edad';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _addressController,
+                        decoration:
+                            const InputDecoration(labelText: 'Dirección'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu dirección';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _nationalityController,
+                        decoration:
+                            const InputDecoration(labelText: 'Nacionalidad'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu nacionalidad';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _telephoneController,
+                        decoration:
+                            const InputDecoration(labelText: 'Teléfono'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu número de teléfono';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                            labelText: 'Correo Electrónico'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, ingresa tu correo electrónico';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  )),
             ),
-
             const SizedBox(height: 20),
-
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blue,
-                    blurRadius: 3.0,
-                    spreadRadius: 0.0,
-                  )
-                ],
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue,
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                    )
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255)),
               child: Container(
                 decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 255, 255, 255)
-                ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255)),
                 margin: const EdgeInsets.all(15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [ 
+                  children: [
                     const ListTile(
                       title: Row(
                         children: [
-                          Icon(Icons.family_restroom,
+                          Icon(
+                            Icons.family_restroom,
                             color: Colors.blue,
                             size: 25,
                           ),
@@ -315,12 +342,13 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           Text('Datos Familiares'),
                         ],
                       ),
-                      subtitle: Text('Es importante conocer el entorno familiar del adoptante'),
+                      subtitle: Text(
+                          'Es importante conocer el entorno familiar del adoptante'),
                     ),
-
                     TextFormField(
                       controller: _familyController,
-                      decoration: const InputDecoration(labelText: '¿Vives en familia?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Vives en familia?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si vives en familia';
@@ -328,10 +356,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     TextFormField(
                       controller: _childrenController,
-                      decoration: const InputDecoration(labelText: '¿Tienes hijos pequeños?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Tienes hijos pequeños?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes hijos';
@@ -339,10 +367,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     TextFormField(
                       controller: _agechildrenController,
-                      decoration: const InputDecoration(labelText: '¿Qué edad tienen los niños?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Qué edad tienen los niños?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes hijos mayores de edad';
@@ -350,10 +378,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     TextFormField(
                       controller: _otherpetsController,
-                      decoration: const InputDecoration(labelText: '¿Tienes otras mascotas?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Tienes otras mascotas?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes otras mascotas';
@@ -365,36 +393,32 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.green,
-                    blurRadius: 3.0,
-                    spreadRadius: 0.0,
-                  )
-                ],
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green,
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                    )
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255)),
               child: Container(
                 decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 255, 255, 255)
-                ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255)),
                 margin: const EdgeInsets.all(15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,7 +426,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                     const ListTile(
                       title: Row(
                         children: [
-                          Icon(Icons.work,
+                          Icon(
+                            Icons.work,
                             color: Colors.green,
                             size: 25,
                           ),
@@ -410,12 +435,13 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           Text('Datos Laborales'),
                         ],
                       ),
-                      subtitle: Text('Es importante conocer el entorno laboral del adoptante'),
+                      subtitle: Text(
+                          'Es importante conocer el entorno laboral del adoptante'),
                     ),
-
                     TextFormField(
                       controller: _jobController,
-                      decoration: const InputDecoration(labelText: '¿Tienes trabajo?'),
+                      decoration:
+                          const InputDecoration(labelText: '¿Tienes trabajo?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes trabajo';
@@ -423,10 +449,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     TextFormField(
                       controller: _travelController,
-                      decoration: const InputDecoration(labelText: '¿Viajas mucho?'),
+                      decoration:
+                          const InputDecoration(labelText: '¿Viajas mucho?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si viajas mucho';
@@ -438,36 +464,32 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.yellow,
-                    blurRadius: 3.0,
-                    spreadRadius: 0.0,
-                  )
-                ],
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.yellow,
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                    )
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255)),
               child: Container(
                 decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 255, 255, 255)
-                ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255)),
                 margin: const EdgeInsets.all(15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,7 +497,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                     const ListTile(
                       title: Row(
                         children: [
-                          Icon(Icons.home,
+                          Icon(
+                            Icons.home,
                             color: Colors.yellow,
                             size: 25,
                           ),
@@ -483,12 +506,13 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           Text('Datos de Vivienda'),
                         ],
                       ),
-                      subtitle: Text('Es importante conocer el entorno de la vivienda del adoptante'),
+                      subtitle: Text(
+                          'Es importante conocer el entorno de la vivienda del adoptante'),
                     ),
-
                     TextFormField(
                       controller: _typeHomeController,
-                      decoration: const InputDecoration(labelText: '¿Qué tipo de vivienda tienes?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Qué tipo de vivienda tienes?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa el tipo de vivienda';
@@ -496,10 +520,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     TextFormField(
                       controller: _gardensizeController,
-                      decoration: const InputDecoration(labelText: '¿Tienes jardin en casa?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Tienes jardin en casa?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes jardin en casa';
@@ -511,36 +535,32 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.orange,
-                    blurRadius: 3.0,
-                    spreadRadius: 0.0,
-                  )
-                ],
-                color: Color.fromARGB(255, 255, 255, 255)
-              ),
-              child: Container(
-                decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10),
                   ),
-                  color: Color.fromARGB(255, 255, 255, 255)
-                ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.orange,
+                      blurRadius: 3.0,
+                      spreadRadius: 0.0,
+                    )
+                  ],
+                  color: Color.fromARGB(255, 255, 255, 255)),
+              child: Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255)),
                 margin: const EdgeInsets.all(15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,7 +568,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                     const ListTile(
                       title: Row(
                         children: [
-                          Icon(Icons.question_answer,
+                          Icon(
+                            Icons.question_answer,
                             color: Colors.orange,
                             size: 25,
                           ),
@@ -556,12 +577,13 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           Text('Experiencia y Motivo de Adopción'),
                         ],
                       ),
-                      subtitle: Text('Es importante conocer el Motivo de adopción'),
+                      subtitle:
+                          Text('Es importante conocer el Motivo de adopción'),
                     ),
-
                     TextFormField(
                       controller: _experienceController,
-                      decoration: const InputDecoration(labelText: '¿Tienes experiencia con mascotas?'),
+                      decoration: const InputDecoration(
+                          labelText: '¿Tienes experiencia con mascotas?'),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa si tienes experiencia con mascotas';
@@ -569,32 +591,27 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 20),
-
                     TextFormField(
                       controller: _messageController,
-                      decoration: const InputDecoration(labelText: 'Motivo de Adopción'),
+                      decoration: const InputDecoration(
+                          labelText: 'Motivo de Adopción'),
                       maxLines: 2,
                     ),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _submitForm();
-                  sendEmail(widget.ownerEmail!, 'Los datos han sido guardados.');
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Solicitud enviada con éxito')),
-                  );
-                },
-              
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Solicitud enviada con éxito')),
+                );
+              },
               child: const Text('Enviar Solicitud'),
             ),
           ],
